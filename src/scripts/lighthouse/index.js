@@ -1,5 +1,6 @@
 const lighthouse = require('lighthouse');
 const chromeLauncher = require('chrome-launcher');
+const config = require('./lighthouse-config')
 
 const launchChromeAndRunLighthouse = (url, opts, config = null) => {
   return chromeLauncher.launch({chromeFlags: opts.chromeFlags}).then(chrome => {
@@ -21,7 +22,7 @@ const opts = {
 };
 
 // Usage:
-// launchChromeAndRunLighthouse('https://marcradziwill.com', opts).then(results => {
-//   // Use results!
-//   console.log(results);
-// });
+launchChromeAndRunLighthouse('https://marcradziwill.com', opts, config).then(results => {
+  // Use results!
+  console.log(results.audits['performance-budget'].details.items);
+});
