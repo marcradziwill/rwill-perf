@@ -1,7 +1,7 @@
 const lighthouse = require('lighthouse');
 const chromeLauncher = require('chrome-launcher');
 
-function launchChromeAndRunLighthouse(url, opts, config = null) {
+const launchChromeAndRunLighthouse = (url, opts, config = null) => {
   return chromeLauncher.launch({chromeFlags: opts.chromeFlags}).then(chrome => {
     opts.port = chrome.port;
     return lighthouse(url, opts, config).then(results => {
@@ -16,11 +16,12 @@ function launchChromeAndRunLighthouse(url, opts, config = null) {
 
 const opts = {
   // chromeFlags: ['--show-paint-rects'],
+  chromeFlags: ['--headless'],
   onlyCategories: ['performance']
 };
 
 // Usage:
-launchChromeAndRunLighthouse('https://marcradziwill.com', opts).then(results => {
-  // Use results!
-  console.log(results);
-});
+// launchChromeAndRunLighthouse('https://marcradziwill.com', opts).then(results => {
+//   // Use results!
+//   console.log(results);
+// });

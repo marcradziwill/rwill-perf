@@ -5,7 +5,7 @@
   "main": "src/index.js",
   "scripts": {
     "commit": "npx git-cz",
-    "test": "jest",
+    "test": "jest --detectOpenHandles",
     "semantic-release": "semantic-release"
   },
   "repository": {
