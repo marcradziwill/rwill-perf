@@ -5,9 +5,9 @@
   "main": "src/index.js",
   "scripts": {
     "commit": "npx git-cz",
-    "test": "jest --detectOpenHandles",
+    "test": "jest",
     "semantic-release": "semantic-release",
-    "lh": "lighthouse https://marcradziwill.com --quiet --chrome-flags='--headless' --budget-path=src/scripts/lighthouse/budget.json --output=json --output-path=report.json",
+    "lh2": "lighthouse https://marcradziwill.com --quiet --chrome-flags='--headless' --budget-path=src/scripts/lighthouse/budget.json --output=json --output-path=report.json",
     "lighthouse": "node src lighthouse"
   },
   "repository": {
@@ -25,6 +25,7 @@
   },
   "homepage": "https://github.com/marcradziwill/rwill-perf#readme",
   "devDependencies": {
+    "@babel/runtime": "7.7.6",
     "commitizen": "4.0.3",
     "cz-conventional-changelog": "3.0.2",
     "jest": "24.9.0",
@@ -36,6 +37,7 @@
     }
   },
   "dependencies": {
+    "bundlesize": "0.18.0",
     "chrome-launcher": "0.12.0",
     "cross-spawn": "7.0.1",
     "lighthouse": "5.6.0"

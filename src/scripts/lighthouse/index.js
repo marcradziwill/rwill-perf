@@ -1,28 +1,46 @@
 const lighthouse = require('lighthouse');
+const spawn = require('cross-spawn')
 const chromeLauncher = require('chrome-launcher');
-const config = require('./lighthouse-config')
+const lighthouseConfig = require('./lighthouse-config')
+const path = require('path')
+const fs = require('fs')
 
-const launchChromeAndRunLighthouse = (url, opts, config = null) => {
-  return chromeLauncher.launch({chromeFlags: opts.chromeFlags}).then(chrome => {
-    opts.port = chrome.port;
-    return lighthouse(url, opts, config).then(results => {
-      // use results.lhr for the JS-consumeable output
-      // https://github.com/GoogleChrome/lighthouse/blob/master/types/lhr.d.ts
-      // use results.report for the HTML/JSON/CSV output as a string
-      // use results.artifacts for the trace/screenshots/other specific case you need (rarer)
-      return chrome.kill().then(() => results.lhr)
-    });
-  });
+const [executor, ignoredBin, script, ...args] = process.argv
+
+const useBuiltinConfig = true;
+const config = useBuiltinConfig
+  ? ['--config', lighthouseConfig]
+  : []
+
+const result = spawn.sync(
+  resolveBin('lighthouse'),
+  [...config, ...args, '--chrome-flags="--headless"'],
+  {stdio: 'inherit'},
+)
+
+// eslint-disable-next-line complexity
+function resolveBin(modName, {executable = modName, cwd = process.cwd()} = {}) {
+  let pathFromWhich
+  try {
+    pathFromWhich = fs.realpathSync(which.sync(executable))
+    if (pathFromWhich && pathFromWhich.includes('.CMD')) return pathFromWhich
+  } catch (_error) {
+    // ignore _error
+  }
+  try {
+    const modPkgPath = require.resolve(`${modName}/package.json`)
+    const modPkgDir = path.dirname(modPkgPath)
+    const {bin} = require(modPkgPath)
+    const binPath = typeof bin === 'string' ? bin : bin[executable]
+    const fullPathToBin = path.join(modPkgDir, binPath)
+    if (fullPathToBin === pathFromWhich) {
+      return executable
+    }
+    return fullPathToBin.replace(cwd, '.')
+  } catch (error) {
+    if (pathFromWhich) {
+      return executable
+    }
+    throw error
+  }
 }
-
-const opts = {
-  // chromeFlags: ['--show-paint-rects'],
-  chromeFlags: ['--headless'],
-  onlyCategories: ['performance']
-};
-
-// Usage:
-launchChromeAndRunLighthouse('https://marcradziwill.com', opts, config).then(results => {
-  // Use results!
-  console.log(results.audits['performance-budget'].details.items);
-});
