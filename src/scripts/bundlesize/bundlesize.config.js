@@ -1,8 +1,8 @@
 module.exports = {
   "files": [
     {
-      "path": "./dist.js",
-      "maxSize": "3 kB"
+      "path": "./dist/*.js",
+      "maxSize": "10 kB"
     }
   ]
 }
